@@ -37,15 +37,15 @@ main(!IO) :-
 }
 
 fn scaffold_file(project_name: &str) -> io::Result<()> {
-    let dir = Path::new(project_name);
+    let dir      = Path::new(project_name);
+    let fname    = format!("{}.m", project_name);
+    let fname    = dir.join(fname);
+    let mut file = File::create(&fname)?;
+    let output   = get_output(project_name);
+
     fs::create_dir_all(dir)?;
     println!("created {:?}.", dir);
 
-    let fname = format!("{}.m", project_name);
-    let fname = dir.join(fname);
-    let mut file = File::create(&fname)?;
-
-    let output = get_output(project_name);
     file.write_all(output.as_bytes())?;
     println!("created {:?}.", fname);
 

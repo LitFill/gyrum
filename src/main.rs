@@ -37,19 +37,30 @@ main(!IO) :-
 }
 
 fn scaffold_file(project_name: &str) -> io::Result<()> {
-    let dir      = Path::new(project_name);
-    let fname    = format!("{}.m", project_name);
-    let fname    = dir.join(fname);
-    let mut file = File::create(&fname)?;
-    let output   = get_output(project_name);
+    let dir    = Path::new(project_name);
+    let fname  = format!("{}.m", project_name);
+    let fname  = dir.join(fname);
+    let output = get_output(project_name);
 
-    fs::create_dir_all(dir)?;
-    println!("created {:?}.", dir);
+    match fs::create_dir_all(dir) {
+        Err(e) => eprintln!("[ERROR] {} in creating directory: {}", line!(), e),
+        Ok(_)  =>  println!("[INFO] created a directory: {:?}", dir),
+    }
 
-    file.write_all(output.as_bytes())?;
-    println!("created {:?}.", fname);
+    match File::create(&fname) {
+        Err(e) => {
+            eprintln!("[ERROR] {} in creating file {:?}: {}", line!(), fname, e);
+            Err(e)
+        },
+        Ok(mut file) => {
+            match file.write_all(output.as_bytes()) {
+                Err(e) => eprintln!("[ERROR] {} in writing file: {}", line!(), e),
+                Ok(_)  =>  println!("[INFO] created and wrote a file: {:?}", fname),
+            }
 
-    Ok(())
+            Ok(())
+        },
+    }
 }
 
 fn run() -> io::Result<()> {

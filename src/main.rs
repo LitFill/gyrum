@@ -22,7 +22,7 @@ enum Command {
 
 fn get_output(module_name: &str) -> String {
     format!(
-":- module {}.
+r#":- module {}.
 
 :- interface.
 :- import_module io.
@@ -32,8 +32,8 @@ fn get_output(module_name: &str) -> String {
 :- implementation.
 
 main(!IO) :-
-    io.write_string(\"Hello, Mercury!\", !IO).
-", module_name)
+    io.write_string("Hello, Mercury!\n", !IO).
+"#, module_name)
 }
 
 fn scaffold_file(project_name: &str) -> io::Result<()> {
